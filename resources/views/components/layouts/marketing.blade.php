@@ -14,9 +14,13 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body
-        class="font-sans antialiased text-boss-dark bg-white overflow-x-hidden"
+        @class([
+            'font-sans antialiased overflow-x-hidden',
+            'bg-boss-ink text-boss-ivory' => $transparentNav,
+            'bg-white text-boss-dark' => ! $transparentNav,
+        ])
         x-data="{ scrolled: false, navOpen: false, transparent: {{ $transparentNav ? 'true' : 'false' }} }"
-        @scroll.window="scrolled = (window.pageYOffset || document.documentElement.scrollTop) > 60"
+        @scroll.window="scrolled = (window.pageYOffset || document.documentElement.scrollTop) > 20"
     >
         <x-marketing-navbar />
 
