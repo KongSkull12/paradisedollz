@@ -18,12 +18,23 @@ class AdminApplicationController extends Controller
 {
     public function index(): View
     {
-        $applications = ModelApplication::query()
-            ->latest()
-            ->with('reviewer:id,name')
-            ->paginate(20);
+        $statusFilter = (string) request()->query('status', 'all');
+        $allowed = ['all', ModelApplication::STATUS_PENDING, ModelApplication::STATUS_APPROVED, ModelApplication::STATUS_REJECTED];
+        if (! in_array($statusFilter, $allowed, true)) {
+            $statusFilter = 'all';
+        }
 
-        return view('admin.applications.index', compact('applications'));
+        $query = ModelApplication::query()
+            ->latest()
+            ->with('reviewer:id,name');
+
+        if ($statusFilter !== 'all') {
+            $query->where('status', $statusFilter);
+        }
+
+        $applications = $query->paginate(20)->withQueryString();
+
+        return view('admin.applications.index', compact('applications', 'statusFilter'));
     }
 
     public function approve(ModelApplication $application): RedirectResponse

@@ -30,6 +30,33 @@
             </div>
         @endif
 
+        <nav class="flex flex-wrap gap-2" aria-label="{{ __('Application filters') }}">
+            @php
+                $filterTabs = [
+                    'all' => __('All'),
+                    \App\Models\ModelApplication::STATUS_PENDING => __('Pending'),
+                    \App\Models\ModelApplication::STATUS_APPROVED => __('Approved'),
+                    \App\Models\ModelApplication::STATUS_REJECTED => __('Rejected'),
+                ];
+            @endphp
+            @foreach ($filterTabs as $value => $label)
+                <a
+                    href="{{ route('admin.applications.index', ['status' => $value]) }}"
+                    @class([
+                        'rounded-full border px-3.5 py-1.5 text-[0.7rem] font-medium uppercase tracking-[0.12em] transition-colors',
+                        'border-boss-gold/40 bg-boss-gold/15 text-boss-gold' => $statusFilter === $value,
+                        'border-white/[0.08] bg-white/[0.03] text-boss-ivory/45 hover:border-boss-gold/25 hover:text-boss-ivory/70' => $statusFilter !== $value,
+                    ])
+                >
+                    {{ $label }}
+                </a>
+            @endforeach
+        </nav>
+
+        @if ($statusFilter === \App\Models\ModelApplication::STATUS_PENDING && $applications->total() === 0)
+            <p class="rounded-xl border border-white/[0.06] bg-boss-panel px-4 py-3 text-sm text-boss-ivory/45">{{ __('No pending applications. New submissions will show Approve and Reject actions here.') }}</p>
+        @endif
+
         <div class="overflow-hidden rounded-2xl border border-white/[0.06] bg-boss-panel-strong">
             <div class="overflow-x-auto">
                 <table class="pd-table min-w-full">
@@ -91,7 +118,14 @@
                                             </form>
                                         </div>
                                     @elseif ($application->reviewer)
-                                        <div class="text-xs text-boss-ivory/35">{{ __('Reviewed by :name', ['name' => $application->reviewer->name]) }}</div>
+                                        <div class="space-y-1 text-xs leading-snug text-boss-ivory/42">
+                                            <div>{{ __('Reviewed by :name', ['name' => $application->reviewer->name]) }}</div>
+                                            @if ($application->reviewed_at)
+                                                <time datetime="{{ $application->reviewed_at->toIso8601String() }}" class="block text-[0.65rem] text-boss-ivory/28">{{ $application->reviewed_at->timezone(config('app.timezone'))->format('M j, Y · g:i a') }}</time>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <span class="text-xs text-boss-ivory/30">{{ __('No reviewer recorded') }}</span>
                                     @endif
                                 </td>
                             </tr>

@@ -24,24 +24,24 @@
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
+        <!-- Remember + actions -->
+        <div class="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <label for="remember_me" class="inline-flex cursor-pointer items-center">
                 <input id="remember_me" type="checkbox" class="rounded border-white/15 bg-white/5 text-boss-gold focus:ring-boss-gold" name="remember">
                 <span class="ms-2 text-sm text-boss-ivory/45">{{ __('Remember me') }}</span>
             </label>
-        </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="text-sm text-boss-ivory/42 underline transition-colors hover:text-boss-gold" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
+            <div class="flex flex-wrap items-center gap-3 sm:justify-end">
+                @if (Route::has('password.request'))
+                    <a class="text-sm text-boss-ivory/42 underline transition-colors hover:text-boss-gold" href="{{ route('password.request') }}">
+                        {{ __('Forgot your password?') }}
+                    </a>
+                @endif
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+                <x-primary-button>
+                    {{ __('Log in') }}
+                </x-primary-button>
+            </div>
         </div>
     </form>
 </x-guest-layout>
